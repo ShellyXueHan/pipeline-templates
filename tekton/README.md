@@ -22,7 +22,7 @@ This project aims to improve the management experience with tekton pipelines. Th
 
 The project creates secrets for your docker and ssh credentials using the Kustomize [secretGenerator](https://kubernetes.io/docs/tasks/configmap-secret/managing-secret-using-kustomize/). This allows for the git-clone and buildah Tekton tasks to interact with private repositories. I would consider setting up git and container registry credentials a foundational prerequisite for operating cicd tooling. Once Kustomize creates the secrets, they are referenced directly by name in the [Pipeline Run Templates](#pipeline-run-templates) section.
 
-The project is intended to improve developement agility by providung one configuration file that holds kubernetes secrets in the form of simple key pairs. for all the secrets that are needed.  from the installation manifests to the custom Tekton CRDs that manage the creation and execution of pipelines. Whenever changes are made to `./base` or `./overlays,` run `./tekton.sh -a` to apply the changes against the current Kubernetes context. Behind the scenes, the following functions are executed.
+The project is intended to improve development agility by providing one configuration file that holds kubernetes secrets in the form of simple key pairs. for all the secrets that are needed.  from the installation manifests to the custom Tekton CRDs that manage the creation and execution of pipelines. Whenever changes are made to `./base` or `./overlays,` run `./tekton.sh -a` to apply the changes against the current Kubernetes context. Behind the scenes, the following functions are executed.
 
 ### Layout
 
@@ -107,7 +107,7 @@ Note: This project has been tested on *linux/arm64*, *linux/amd64*, *linux/aarch
     Creates secrets for all secret types. The `key` refers to the secret name, and the `value` is the secret contents.
 
     `github-secret` is used for triggers. Can be left as is if triggers are not used.
-    `image-registry-username` and `image-registry-password` are the account credentials for your image regsitry. This could be **docker.io**, **quay.io**, **gcr.io** or any other docker compatible docker regsitry.
+    `image-registry-username` and `image-registry-password` are the account credentials for your image registry. This could be **docker.io**, **quay.io**, **gcr.io** or any other docker compatible docker registry.
 
    ```bash
    cat <<EOF >./overlays/secrets/secrets.ini
@@ -153,7 +153,7 @@ Usage: tekton.sh [option...]
 
 ## Pipeline Run Templates
 
-All pipeline run templates listed below are tested and working. The `PipelineRun` templates refernece pipelines and tasks that were deployed using `./tekton.sh`. All the dependancies to operate this repository are within the repository. Developers can focus on consuming the pipelines for their needs with minimal changes. Additional to adhoc use, developers can create a yaml file with the following templates and store them in a Git repositoy where they can incorporate the pipeline runs into their own automation workflows. Aslong as the runner has access a Kibernetes cluster, a pipeline run will execute with just `kubectl apply -f <YOUR_PIPELINE_RUN>.yaml`.
+All pipeline run templates listed below are tested and working. The `PipelineRun` templates reference pipelines and tasks that were deployed using `./tekton.sh`. All the dependencies to operate this repository are within the repository. Developers can focus on consuming the pipelines for their needs with minimal changes. Additional to adhoc use, developers can create a yaml file with the following templates and store them in a Git repository where they can incorporate the pipeline runs into their own automation workflows. As long as the runner has access a Kubernetes cluster, a pipeline run will execute with just `kubectl apply -f <YOUR_PIPELINE_RUN>.yaml`.
 
 ### **buildah-build-push**
 
@@ -425,7 +425,7 @@ EOF
 
 ### **trivy-scan**
 
-*Scans for vulnerbilities and file systems. [SonarCloud](https://github.com/aquasecurity/trivy)*
+*Scans for vulnerabilities and file systems. [SonarCloud](https://github.com/aquasecurity/trivy)*
 
 ```yaml
 cat <<EOF | kubectl create -f -
@@ -462,7 +462,7 @@ EOF
 
 ### **owasp-scan**
 
-*Scans public web apps for vulnerbilities. [ZAP Scanner](https://www.zaproxy.org/docs/docker/about/)*
+*Scans public web apps for vulnerabilities. [ZAP Scanner](https://www.zaproxy.org/docs/docker/about/)*
 
 - **targetUrl**: The URL to run the scan against.
 - **scanType**: Accepted values are `quick` or `full`.
@@ -632,7 +632,7 @@ resources:
   - ./triggers
 ```
 
-Declaring the folder as a resource will find and execute any kustomization.yaml files within the directories accordingly. All manifests are explicitly declared which allows for resources currently under development to be excluded from the deployment. This eliminates the need for branching when creating new Tekton resources. Aslong as the resources are not declared in Kustomize, the changes will not be breaking.
+Declaring the folder as a resource will find and execute any kustomization.yaml files within the directories accordingly. All manifests are explicitly declared which allows for resources currently under development to be excluded from the deployment. This eliminates the need for branching when creating new Tekton resources. As long as the resources are not declared in Kustomize, the changes will not be breaking.
 
 ```yaml
 ## ./base/install/kustomization.yaml
